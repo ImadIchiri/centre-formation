@@ -34,6 +34,7 @@ public class Formation {
     @JsonBackReference
     private Formateur formateur;
 
+    @JsonBackReference
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Cours> courses = new HashSet<>();
 
@@ -176,4 +177,5 @@ public class Formation {
     public void setPaiments(Set<Paiment> paiments) {
         this.paiments = paiments;
     }
+
 }

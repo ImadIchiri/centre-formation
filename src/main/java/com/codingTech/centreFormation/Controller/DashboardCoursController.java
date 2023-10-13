@@ -2,9 +2,11 @@ package com.codingTech.centreFormation.Controller;
 
 import com.codingTech.centreFormation.Entity.Cours;
 import com.codingTech.centreFormation.Entity.Formateur;
+import com.codingTech.centreFormation.Entity.Formation;
 import com.codingTech.centreFormation.Entity.Role;
 import com.codingTech.centreFormation.Enums.RolesEnum;
 import com.codingTech.centreFormation.Service.CoursServiceInter;
+import com.codingTech.centreFormation.Service.FormationServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +23,16 @@ public class DashboardCoursController {
     @Autowired
     CoursServiceInter coursService;
 
+    @Autowired
+    FormationServiceInter formationService;
+
     @GetMapping("")
     public List<Cours> getAllCourses() {
         return coursService.findAllCours();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cours> getCoursById(@RequestParam(name = "id", required = true) int id) {
+    public ResponseEntity<Cours> getCoursById(@PathVariable(name = "id", required = true) int id) {
         Optional<Cours> optCours = coursService.findCoursById(id);
 
         return optCours.map(cours -> new ResponseEntity<>(cours, HttpStatus.FOUND))
@@ -40,6 +45,12 @@ public class DashboardCoursController {
         // Path Format: 'main_path/formateur_name/cours_name/cours_id'
 
         return coursService.addCours(cours);
+    }
+
+    @PostMapping("/add-all")
+    public List<Cours> addCoursList(@RequestBody List<Cours> courses) {
+
+        return coursService.addListCourses(courses);
     }
 
     @PutMapping("/{id}/edit")
@@ -66,11 +77,9 @@ public class DashboardCoursController {
             Cours cours = optCours.get();
 
             coursService.removeCours(cours);
-            return new ResponseEntity<>(cours, HttpStatus.OK);
-
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

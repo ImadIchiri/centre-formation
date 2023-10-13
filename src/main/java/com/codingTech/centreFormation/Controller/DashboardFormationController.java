@@ -3,6 +3,8 @@ package com.codingTech.centreFormation.Controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.codingTech.centreFormation.Entity.Cours;
+import com.codingTech.centreFormation.Service.CoursServiceInter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,9 @@ public class DashboardFormationController {
     FormationServiceInter formationService;
 
     @Autowired
+    CoursServiceInter coursService;
+
+    @Autowired
     FormateurServiceInter formateurService;
 
     @GetMapping("")
@@ -40,7 +45,7 @@ public class DashboardFormationController {
         Optional<Formation> optFormation = formationService.findFormationById(id);
 
         if (optFormation.isPresent()) {
-            // System.out.println(optFormation.get().getFormateur().getEmail());
+            // System.out.println(optFormation.get());
             return new ResponseEntity<>(optFormation.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -58,7 +63,7 @@ public class DashboardFormationController {
         return formationService.updateFormation(formation);
     }
 
-    @PatchMapping("/{id_formation}/affect/{id_formateur}")
+    @PatchMapping("/{id_formation}/affect/formateur/{id_formateur}")
     public ResponseEntity<Formation> affectFormateurToFormation(
         @PathVariable(name = "id_formation", required = true) int idFormation,
         @PathVariable(name = "id_formateur", required = true) int idFormateur) {
@@ -78,6 +83,32 @@ public class DashboardFormationController {
             }
 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PatchMapping("{id_formation}/affect/cours/{id_cours}")
+    public ResponseEntity<Formation> affectCoursToFormation(
+            @PathVariable(name = "id_formation", required = true) int idFormation,
+            @PathVariable(name = "id_cours", required = true) int idCours
+    ) {
+        Optional<Cours> optCours = coursService.findCoursById(idCours);
+        Optional<Formation> optFormation = formationService.findFormationById(idFormation);
+
+        if (optCours.isPresent() && optFormation.isPresent()) {
+            Cours cours = optCours.get();
+            Formation formation = optFormation.get();
+
+            boolean isCoursExist = cours.getFormations().stream()
+                    .anyMatch(item -> item.getId() == cours.getId());
+
+            if (!isCoursExist) {
+                cours.getFormations().add(formation);
+                coursService.updateCours(cours);
+            }
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}/delete")

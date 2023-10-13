@@ -38,5 +38,4 @@ public class Formateur extends User {
         this.formations = formations;
     }
 
-    
 }

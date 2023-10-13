@@ -30,6 +30,11 @@ public class CoursServiceImpl implements CoursServiceInter {
     }
 
     @Override
+    public List<Cours> addListCourses(List<Cours> courses) {
+        return coursRepository.saveAll(courses);
+    }
+
+    @Override
     public Cours updateCours(Cours cours) {
         return coursRepository.save(cours);
     }

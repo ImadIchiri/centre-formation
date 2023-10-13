@@ -1,5 +1,7 @@
 package com.codingTech.centreFormation.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +21,7 @@ public class Cours {
     private String description;
     private String path;
 
+    @JsonManagedReference
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
     private Set<Formation> formations = new HashSet<>();
 

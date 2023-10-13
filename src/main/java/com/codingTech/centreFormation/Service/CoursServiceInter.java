@@ -12,6 +12,8 @@ public interface CoursServiceInter {
 
     public Cours addCours(Cours cours);
 
+    List<Cours> addListCourses(List<Cours> courses);
+
     public Cours updateCours(Cours cours);
 
     public void removeCours(Cours cours);
